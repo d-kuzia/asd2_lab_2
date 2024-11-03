@@ -13,7 +13,7 @@ namespace asd2_lab_2
 
         public static void Main()
         {
-            RunExperiments(10);
+            RunExperiments(3);
         }
 
         public static void RunExperiments(int numExp)
@@ -33,7 +33,7 @@ namespace asd2_lab_2
                 // BFS
                 var bfsWatch = Stopwatch.StartNew();
                 int bfsSteps = 0;
-                var bfsSolution = BFS_8Queens.Solve(initialState, out bfsSteps);
+                var bfsSolution = BFS_8Queens.Solve(initialState, maxDepth: 1, out bfsSteps);
                 bfsWatch.Stop();
                 if (bfsSolution != null)
                 {

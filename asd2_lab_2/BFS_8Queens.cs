@@ -8,25 +8,31 @@ namespace asd2_lab_2
 {
     public class BFS_8Queens
     {
-        public static QueenState Solve(QueenState initialState, out int steps)
+        public static QueenState Solve(QueenState initialState, int maxDepth, out int steps)
         {
-            Queue<QueenState> queue = new Queue<QueenState>();
-            queue.Enqueue(initialState);
+            Queue<(QueenState, int)> queue = new Queue<(QueenState, int)>();
+            queue.Enqueue((initialState, 0));
             steps = 0;
 
             while (queue.Count > 0)
             {
-                QueenState current = queue.Dequeue();
+                var (current, depth) = queue.Dequeue();
                 steps++;
+
+                Console.WriteLine($"Current state: {string.Join(",", current.Queens)}, Heuristic: {current.Heuristic}, Depth: {depth}");
 
                 if (current.IsGoal())
                 {
+                    Console.WriteLine("Goal found!");
                     return current;
                 }
 
-                foreach (var next in current.GenerateNextStates())
+                if (depth < maxDepth)
                 {
-                    queue.Enqueue(next);
+                    foreach (var next in current.GenerateNextStates())
+                    {
+                        queue.Enqueue((next, depth + 1));
+                    }
                 }
             }
 
