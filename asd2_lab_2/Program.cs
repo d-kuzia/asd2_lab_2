@@ -9,44 +9,65 @@ namespace asd2_lab_2
 {
     public class Program
     {
+        private static Random random = new Random();
+
         public static void Main()
         {
-            RunExperiments(20);
+            RunExperiments(10);
         }
 
         public static void RunExperiments(int numExp)
         {
             int bfsStepsSum = 0;
             int aStarStepsSum = 0;
+            int bfsSuccessCount = 0;
+            int aStarSuccessCount = 0;
 
             for (int i = 0; i < numExp; i++)
             {
                 Console.WriteLine($"Experiment {i + 1}");
 
-                //BFS
+                // Генерація випадкового початкового стану
+                QueenState initialState = GenerateRandomInitialState();
+
+                // BFS
                 var bfsWatch = Stopwatch.StartNew();
-                var bfsSolution = BFS_8Queens.Solve();
+                int bfsSteps = 0;
+                var bfsSolution = BFS_8Queens.Solve(initialState, out bfsSteps);
                 bfsWatch.Stop();
-                Console.WriteLine($"BFS Solution found: {bfsSolution != null}, Time: {bfsWatch.ElapsedMilliseconds}ms");
-
-                //A star
-                var aStarWatch = Stopwatch.StartNew();
-                var aStarSolution = AStar_8Queens.Solve();
-                aStarWatch.Stop();
-                Console.WriteLine($"A* Solution found: {aStarSolution != null}, Time: {aStarWatch.ElapsedMilliseconds}ms");
-
-                if (bfsSolution !=  null)
+                if (bfsSolution != null)
                 {
-                    bfsStepsSum += bfsSolution.Heuristic;
+                    bfsStepsSum += bfsSteps;
+                    bfsSuccessCount++;
                 }
+                Console.WriteLine($"BFS Solution found: {bfsSolution != null}, Time: {bfsWatch.ElapsedMilliseconds}ms, Steps: {bfsSteps}");
+
+                // A*
+                /*var aStarWatch = Stopwatch.StartNew();
+                int aStarSteps = 0;
+                var aStarSolution = AStar_8Queens.Solve(initialState, out aStarSteps);
+                aStarWatch.Stop();
                 if (aStarSolution != null)
                 {
-                    aStarStepsSum += aStarSolution.Heuristic;
+                    aStarStepsSum += aStarSteps;
+                    aStarSuccessCount++;
                 }
-
-                Console.WriteLine($"BFS Average Steps: {bfsStepsSum / numExp}");
-                Console.WriteLine($"A* Average Steps: {aStarStepsSum / numExp}");
+                Console.WriteLine($"A* Solution found: {aStarSolution != null}, Time: {aStarWatch.ElapsedMilliseconds}ms, Steps: {aStarSteps}");*/
             }
+
+            Console.WriteLine("\nAverage Results:");
+            Console.WriteLine($"BFS Average Steps: {(bfsSuccessCount > 0 ? bfsStepsSum / bfsSuccessCount : 0)}");
+            Console.WriteLine($"A* Average Steps: {(aStarSuccessCount > 0 ? aStarStepsSum / aStarSuccessCount : 0)}");
+        }
+
+        public static QueenState GenerateRandomInitialState()
+        {
+            int[] queens = new int[8];
+            for (int i = 0; i < 8; i++)
+            {
+                queens[i] = random.Next(8);
+            }
+            return new QueenState(queens);
         }
     }
 }

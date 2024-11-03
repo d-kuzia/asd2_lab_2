@@ -8,17 +8,19 @@ namespace asd2_lab_2
 {
     public class AStar_8Queens
     {
-        public static QueenState Solve()
+        public static QueenState Solve(QueenState initialState, out int steps)
         {
             PriorityQueue<QueenState, int> openList = new PriorityQueue<QueenState, int>();
             HashSet<string> closedList = new HashSet<string>();
 
-            QueenState initialState = new QueenState(new int[8]);
             openList.Enqueue(initialState, initialState.Heuristic);
+            steps = 0;
 
             while (openList.Count > 0)
             {
                 QueenState current = openList.Dequeue();
+                steps++;
+
                 if (current.IsGoal())
                 {
                     return current;

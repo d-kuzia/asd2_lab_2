@@ -8,15 +8,17 @@ namespace asd2_lab_2
 {
     public class BFS_8Queens
     {
-        public static QueenState Solve()
+        public static QueenState Solve(QueenState initialState, out int steps)
         {
             Queue<QueenState> queue = new Queue<QueenState>();
-            QueenState initialState = new QueenState(new int[8]);
             queue.Enqueue(initialState);
+            steps = 0;
 
             while (queue.Count > 0)
             {
                 QueenState current = queue.Dequeue();
+                steps++;
+
                 if (current.IsGoal())
                 {
                     return current;
