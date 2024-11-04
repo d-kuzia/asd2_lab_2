@@ -50,5 +50,21 @@ namespace asd2_lab_2
             }
             return nextStates;
         }
+
+        public void PrintBoard()
+        {
+            for (int i = 0; i < Queens.Length; i++)
+            {
+                for (int j = 0; j < Queens.Length; j++)
+                {
+                    if (Queens[i] == j)
+                        Console.Write("Q ");
+                    else
+                        Console.Write(". ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+        }
     }
 }

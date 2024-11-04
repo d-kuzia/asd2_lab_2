@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,35 +9,82 @@ namespace asd2_lab_2
 {
     public class BFS_8Queens
     {
-        public static QueenState Solve(QueenState initialState, int maxDepth, out int steps)
+        private int Size;
+        private List<(int, int)> InitialState;
+
+        public BFS_8Queens(int size, List<(int, int)> initialState)
         {
-            Queue<(QueenState, int)> queue = new Queue<(QueenState, int)>();
-            queue.Enqueue((initialState, 0));
-            steps = 0;
+            this.Size = size;
+            this.InitialState = initialState;
+        }
+
+        public List<(int, int)> SolveBFS()
+        {
+            var queue = new Queue<List<(int, int)>>();
+            queue.Enqueue(new List<(int, int)>(InitialState));
 
             while (queue.Count > 0)
             {
-                var (current, depth) = queue.Dequeue();
-                steps++;
+                var solution = queue.Dequeue();
 
-                Console.WriteLine($"Current state: {string.Join(",", current.Queens)}, Heuristic: {current.Heuristic}, Depth: {depth}");
-
-                if (current.IsGoal())
+                if (solution.Count == Size)
                 {
-                    Console.WriteLine("Goal found!");
-                    return current;
+                    if (!HasConflict(solution))
+                    {
+                        return solution;
+                    }
+                    continue;
                 }
 
-                if (depth < maxDepth)
+                int row = solution.Count;
+
+                for (int col = 0; col < Size; col++)
                 {
-                    foreach (var next in current.GenerateNextStates())
+                    var newSolution = new List<(int, int)>(solution) { (row, col) };
+
+                    if (!HasConflict(newSolution))
                     {
-                        queue.Enqueue((next, depth + 1));
+                        queue.Enqueue(newSolution);
                     }
                 }
             }
 
             return null;
+        }
+
+        private bool HasConflict(List<(int, int)> queens)
+        {
+            for (int i = 0; i < queens.Count; i++)
+            {
+                for (int j = i + 1; j < queens.Count; j++)
+                {
+                    var (row1, col1) = queens[i];
+                    var (row2, col2) = queens[j];
+
+                    if (col1 == col2 || Math.Abs(row1 - row2) == Math.Abs(col1 - col2))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void PrintSolution(List<(int, int)> solution)
+        {
+            for (int row = 0; row < Size; row++)
+            {
+                for (int col = 0; col < Size; col++)
+                {
+                    if (solution.Contains((row, col)))
+                        Console.Write("Q ");
+                    else
+                        Console.Write(". ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
         }
     }
 }
