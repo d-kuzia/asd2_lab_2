@@ -16,13 +16,16 @@ namespace asd2_lab_2
             this.size = size;
         }
 
-        public List<(int, int)> SolveBFS()
+        public List<(int, int)> SolveBFS(out int generatedStates, out int maxStoredStates)
         {
             Queue<List<(int, int)>> queue = new Queue<List<(int, int)>>();
-            queue.Enqueue(new List<(int, int)>());
+            generatedStates = 0;
+            maxStoredStates = 0;
 
+            queue.Enqueue(new List<(int, int)>());
             while (queue.Count > 0)
             {
+                maxStoredStates = Math.Max(maxStoredStates, queue.Count);
                 var currentBoard = queue.Dequeue();
 
                 if (currentBoard.Count == size)
@@ -35,11 +38,9 @@ namespace asd2_lab_2
                 {
                     if (IsSafe(currentBoard, row, col))
                     {
-                        var newBoard = new List<(int, int)>(currentBoard)
-                        {
-                            (row, col)
-                        };
+                        var newBoard = new List<(int, int)>(currentBoard) { (row, col) };
                         queue.Enqueue(newBoard);
+                        generatedStates++;
                     }
                 }
             }
