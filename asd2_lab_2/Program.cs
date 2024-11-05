@@ -30,8 +30,7 @@ namespace asd2_lab_2
                 // BFS
                 var bfsWatch = Stopwatch.StartNew();
                 int bfsSteps = 0;
-                var initialBFSState = GenerateRandomInitialStateForBFS(8);
-                var nQueens = new BFS_8Queens(8, initialBFSState);
+                var nQueens = new BFS_8Queens(8);
                 var bfsSolution = nQueens.SolveBFS();
                 bfsWatch.Stop();
 
@@ -51,7 +50,7 @@ namespace asd2_lab_2
                 }
 
                 // A*
-                /*var aStarWatch = Stopwatch.StartNew();
+                var aStarWatch = Stopwatch.StartNew();
                 int aStarSteps = 0;
                 var initialState = GenerateRandomInitialState();
                 var aStarSolution = AStar_8Queens.Solve(initialState, out aStarSteps);
@@ -68,24 +67,12 @@ namespace asd2_lab_2
                 else
                 {
                     Console.WriteLine("A* Solution not found.");
-                }*/
+                }
             }
 
             Console.WriteLine("\nAverage Results:");
             Console.WriteLine($"BFS Average Steps: {(bfsSuccessCount > 0 ? bfsStepsSum / bfsSuccessCount : 0)}");
             Console.WriteLine($"A* Average Steps: {(aStarSuccessCount > 0 ? aStarStepsSum / aStarSuccessCount : 0)}");
-        }
-
-        public static List<(int, int)> GenerateRandomInitialStateForBFS(int size)
-        {
-            var queens = new List<(int, int)>();
-            for (int i = 0; i < size; i++)
-            {
-                int row = random.Next(size);
-                int col = random.Next(size);
-                queens.Add((row, col));
-            }
-            return queens;
         }
 
         public static QueenState GenerateRandomInitialState()

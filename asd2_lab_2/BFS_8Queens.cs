@@ -9,42 +9,37 @@ namespace asd2_lab_2
 {
     public class BFS_8Queens
     {
-        private int Size;
-        private List<(int, int)> InitialState;
+        private int size;
 
-        public BFS_8Queens(int size, List<(int, int)> initialState)
+        public BFS_8Queens(int size)
         {
-            this.Size = size;
-            this.InitialState = initialState;
+            this.size = size;
         }
 
         public List<(int, int)> SolveBFS()
         {
-            var queue = new Queue<List<(int, int)>>();
-            queue.Enqueue(new List<(int, int)>(InitialState));
+            Queue<List<(int, int)>> queue = new Queue<List<(int, int)>>();
+            queue.Enqueue(new List<(int, int)>());
 
             while (queue.Count > 0)
             {
-                var solution = queue.Dequeue();
+                var currentBoard = queue.Dequeue();
 
-                if (solution.Count == Size)
+                if (currentBoard.Count == size)
                 {
-                    if (!HasConflict(solution))
-                    {
-                        return solution;
-                    }
-                    continue;
+                    return currentBoard;
                 }
 
-                int row = solution.Count;
-
-                for (int col = 0; col < Size; col++)
+                int row = currentBoard.Count;
+                for (int col = 0; col < size; col++)
                 {
-                    var newSolution = new List<(int, int)>(solution) { (row, col) };
-
-                    if (!HasConflict(newSolution))
+                    if (IsSafe(currentBoard, row, col))
                     {
-                        queue.Enqueue(newSolution);
+                        var newBoard = new List<(int, int)>(currentBoard)
+                        {
+                            (row, col)
+                        };
+                        queue.Enqueue(newBoard);
                     }
                 }
             }
@@ -52,39 +47,42 @@ namespace asd2_lab_2
             return null;
         }
 
-        private bool HasConflict(List<(int, int)> queens)
+        private bool IsSafe(List<(int, int)> board, int row, int col)
         {
-            for (int i = 0; i < queens.Count; i++)
+            foreach (var queen in board)
             {
-                for (int j = i + 1; j < queens.Count; j++)
-                {
-                    var (row1, col1) = queens[i];
-                    var (row2, col2) = queens[j];
+                int queenRow = queen.Item1;
+                int queenCol = queen.Item2;
 
-                    if (col1 == col2 || Math.Abs(row1 - row2) == Math.Abs(col1 - col2))
-                    {
-                        return true;
-                    }
+                if (queenCol == col ||
+                    queenRow - queenCol == row - col ||
+                    queenRow + queenCol == row + col)
+                {
+                    return false;
                 }
             }
-
-            return false;
+            return true;
         }
 
         public void PrintSolution(List<(int, int)> solution)
         {
-            for (int row = 0; row < Size; row++)
+            if (solution == null)
             {
-                for (int col = 0; col < Size; col++)
+                Console.WriteLine("No solution found.");
+                return;
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
                 {
-                    if (solution.Contains((row, col)))
+                    if (solution.Contains((i, j)))
                         Console.Write("Q ");
                     else
                         Console.Write(". ");
                 }
                 Console.WriteLine();
             }
-            Console.WriteLine();
         }
     }
 }
