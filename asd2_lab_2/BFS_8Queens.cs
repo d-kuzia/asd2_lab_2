@@ -16,22 +16,24 @@ namespace asd2_lab_2
             this.size = size;
         }
 
-        public List<List<(int, int)>> SolveBFS(int numSolutions, out int generatedStates, out int maxStoredStates)
+        public List<(List<(int, int)> solution, int steps)> SolveBFS(int numSolutions, out int generatedStates, out int maxStoredStates)
         {
-            List<List<(int, int)>> solutions = new List<List<(int, int)>>();
+            List<(List<(int, int)>, int)> solutions = new List<(List<(int, int)>, int)>();
             Queue<List<(int, int)>> queue = new Queue<List<(int, int)>>();
             generatedStates = 0;
             maxStoredStates = 0;
+            int steps = 0;
 
             queue.Enqueue(new List<(int, int)>());
             while (queue.Count > 0 && solutions.Count < numSolutions)
             {
                 maxStoredStates = Math.Max(maxStoredStates, queue.Count);
                 var currentBoard = queue.Dequeue();
+                steps++;
 
                 if (currentBoard.Count == size)
                 {
-                    solutions.Add(new List<(int, int)>(currentBoard));
+                    solutions.Add((new List<(int, int)>(currentBoard), steps));
                     continue;
                 }
 
