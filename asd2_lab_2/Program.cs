@@ -13,10 +13,10 @@ namespace asd2_lab_2
 
         public static void Main()
         {
-            RunExperiments(20);
+            RunExperiments(2, 2);
         }
 
-        public static void RunExperiments(int numExp)
+        public static void RunExperiments(int numExp, int numSolutions)
         {
             int bfsStepsSum = 0, aStarStepsSum = 0;
             int bfsSuccessCount = 0, aStarSuccessCount = 0;
@@ -30,27 +30,29 @@ namespace asd2_lab_2
 
                 // BFS
                 var bfsWatch = Stopwatch.StartNew();
-                int bfsSteps = 0, bfsGeneratedStates = 0, bfsMaxStoredStates = 0;
+                int bfsGeneratedStates = 0, bfsMaxStoredStates = 0;
                 var nQueens = new BFS_8Queens(8);
-                var bfsSolution = nQueens.SolveBFS(out bfsGeneratedStates, out bfsMaxStoredStates);
+                var bfsSolutions = nQueens.SolveBFS(numSolutions, out bfsGeneratedStates, out bfsMaxStoredStates);
                 bfsWatch.Stop();
 
-                if (bfsSolution != null)
+                if (bfsSolutions.Count > 0)
                 {
-                    bfsSteps = bfsSolution.Count;
-                    bfsStepsSum += bfsSteps;
+                    bfsStepsSum += bfsSolutions.Count;
                     bfsSuccessCount++;
                     bfsGeneratedStatesSum += bfsGeneratedStates;
                     bfsMaxStoredStatesSum += bfsMaxStoredStates;
 
-                    Console.WriteLine($"BFS Solution found: True, Time: {bfsWatch.ElapsedMilliseconds}ms, Steps: {bfsSteps}");
-                    Console.WriteLine("BFS Solution Board:");
-                    nQueens.PrintSolution(bfsSolution);
+                    Console.WriteLine($"BFS Solutions found: {bfsSolutions.Count}, Time: {bfsWatch.ElapsedMilliseconds}ms");
+                    for (int j = 0; j < bfsSolutions.Count; j++)
+                    {
+                        Console.WriteLine($"BFS Solution {j + 1}:");
+                        nQueens.PrintSolution(bfsSolutions[j]);
+                    }
                 }
                 else
                 {
                     bfsDeadEnds++;
-                    Console.WriteLine("BFS Solution not found.");
+                    Console.WriteLine("BFS Solutions not found.");
                 }
 
                 // A*
@@ -79,7 +81,7 @@ namespace asd2_lab_2
             }
 
             Console.WriteLine("\nAverage Results:");
-            Console.WriteLine($"BFS Average Steps: {(bfsSuccessCount > 0 ? bfsStepsSum / bfsSuccessCount : 0)}");
+            Console.WriteLine($"BFS Average Solutions Found: {(bfsSuccessCount > 0 ? bfsStepsSum / bfsSuccessCount : 0)}");
             Console.WriteLine($"BFS Dead Ends: {bfsDeadEnds}");
             Console.WriteLine($"BFS Average Generated States: {(bfsSuccessCount > 0 ? bfsGeneratedStatesSum / bfsSuccessCount : 0)}");
             Console.WriteLine($"BFS Average Max Stored States: {(bfsSuccessCount > 0 ? bfsMaxStoredStatesSum / bfsSuccessCount : 0)}");
