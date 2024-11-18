@@ -18,90 +18,91 @@ namespace asd2_lab_2
 
         public static void RunExperiments(int numExp)
         {
-            int bfsStepsSum = 0, aStarStepsSum = 0;
-            int bfsSuccessCount = 0, aStarSuccessCount = 0;
-            int bfsDeadEnds = 0, aStarDeadEnds = 0;
-            int bfsGeneratedStatesSum = 0, aStarGeneratedStatesSum = 0;
-            int bfsMaxStoredStatesSum = 0, aStarMaxStoredStatesSum = 0;
-
             Console.WriteLine("Running BFS Experiments\n");
-
-            int bfsGeneratedStates = 0, bfsMaxStoredStates = 0;
             var nQueens = new BFS_8Queens(8);
-            var bfsSolutions = nQueens.SolveBFS(numExp, out bfsGeneratedStates, out bfsMaxStoredStates);
+            var bfsSolutions = nQueens.SolveBFS(numExp);
 
             if (bfsSolutions.Count > 0)
             {
-                foreach (var solution in bfsSolutions)
-                {
-                    bfsStepsSum += solution.steps;
-                    bfsSuccessCount++;
-                }
-
-                bfsGeneratedStatesSum += bfsGeneratedStates;
-                bfsMaxStoredStatesSum += bfsMaxStoredStates;
+                double bfsAvgIterations = 0, bfsAvgDeadEnds = 0,
+                       bfsAvgTotalNodes = 0, bfsAvgNodesInMemory = 0;
 
                 for (int i = 0; i < bfsSolutions.Count; i++)
                 {
                     var solution = bfsSolutions[i].solution;
-                    var steps = bfsSolutions[i].steps;
+                    var metrics = bfsSolutions[i].metrics;
+
+                    bfsAvgIterations += metrics.Iterations;
+                    bfsAvgDeadEnds += metrics.DeadEnds;
+                    bfsAvgTotalNodes += metrics.TotalNodes;
+                    bfsAvgNodesInMemory += metrics.NodesInMemory;
 
                     Console.WriteLine($"\nBFS Solution {i + 1}:");
-                    Console.WriteLine($"Steps: {steps}");
+                    /*Console.WriteLine($"Iterations: {metrics.Iterations}");
+                    Console.WriteLine($"Dead Ends: {metrics.DeadEnds}");
+                    Console.WriteLine($"Total Nodes: {metrics.TotalNodes}");
+                    Console.WriteLine($"Nodes in Memory: {metrics.NodesInMemory}");*/
                     nQueens.PrintSolution(solution);
                 }
+
+                // Виводимо середні значення для BFS
+                int count = bfsSolutions.Count;
+                /*Console.WriteLine("\nBFS Average Statistics:");
+                Console.WriteLine($"Average Iterations: {bfsAvgIterations / count:F2}");
+                Console.WriteLine($"Average Dead Ends: {bfsAvgDeadEnds / count:F2}");
+                Console.WriteLine($"Average Total Nodes: {bfsAvgTotalNodes / count:F2}");
+                Console.WriteLine($"Average Nodes in Memory: {bfsAvgNodesInMemory / count:F2}");*/
             }
             else
             {
-                bfsDeadEnds++;
                 Console.WriteLine("BFS Solutions not found.");
             }
 
-            Console.WriteLine("\n\nRunning A* Experiments\n");
+            Console.WriteLine("\nRunning A* Experiments\n");
+            double aStarAvgIterations = 0, aStarAvgDeadEnds = 0,
+                   aStarAvgTotalNodes = 0, aStarAvgNodesInMemory = 0;
+            int aStarSuccessCount = 0;
 
             for (int i = 0; i < numExp; i++)
             {
                 Console.WriteLine($"\nA* Solution {i + 1}:");
 
-                int aStarSteps = 0, aStarGeneratedStates = 0, aStarMaxStoredStates = 0;
                 var initialState = GenerateRandomInitialState();
-
-                Console.WriteLine("A* Initial State:");
+                Console.WriteLine("Initial State:");
                 initialState.PrintBoard();
 
-                var aStarSolution = AStar_8Queens.Solve(initialState, out aStarSteps, out aStarGeneratedStates, out aStarMaxStoredStates);
+                Metrics metrics;
+                var aStarSolution = AStar_8Queens.Solve(initialState, out metrics);
 
                 if (aStarSolution != null)
                 {
-                    aStarStepsSum += aStarSteps;
                     aStarSuccessCount++;
-                    aStarGeneratedStatesSum += aStarGeneratedStates;
-                    aStarMaxStoredStatesSum += aStarMaxStoredStates;
+                    aStarAvgIterations += metrics.Iterations;
+                    aStarAvgDeadEnds += metrics.DeadEnds;
+                    aStarAvgTotalNodes += metrics.TotalNodes;
+                    aStarAvgNodesInMemory += metrics.NodesInMemory;
 
-                    Console.WriteLine($"A* Solution found: True, Steps: {aStarSteps}");
-                    Console.WriteLine("A* Solution Board:");
+                    Console.WriteLine("Solution found:");
+                    /*Console.WriteLine($"Iterations: {metrics.Iterations}");
+                    Console.WriteLine($"Dead Ends: {metrics.DeadEnds}");
+                    Console.WriteLine($"Total Nodes: {metrics.TotalNodes}");
+                    Console.WriteLine($"Nodes in Memory: {metrics.NodesInMemory}");*/
                     aStarSolution.PrintBoard();
                 }
                 else
                 {
-                    aStarDeadEnds++;
-                    Console.WriteLine("A* Solution not found.");
+                    Console.WriteLine("Solution not found.");
                 }
             }
 
-            Console.WriteLine("\nAverage Results:");
-
-            Console.WriteLine("BFS Statistics:");
-            Console.WriteLine($"- Average Steps: {(bfsSuccessCount > 0 ? bfsStepsSum / bfsSuccessCount : 0)}");
-            Console.WriteLine($"- Dead Ends: {bfsDeadEnds}");
-            Console.WriteLine($"- Average Generated States: {(bfsSuccessCount > 0 ? bfsGeneratedStatesSum / bfsSuccessCount : 0)}");
-            Console.WriteLine($"- Average Max Stored States: {(bfsSuccessCount > 0 ? bfsMaxStoredStatesSum / bfsSuccessCount : 0)}");
-
-            Console.WriteLine("A* Statistics:");
-            Console.WriteLine($"- Average Steps: {(aStarSuccessCount > 0 ? aStarStepsSum / aStarSuccessCount : 0)}");
-            Console.WriteLine($"- Dead Ends: {aStarDeadEnds}");
-            Console.WriteLine($"- Average Generated States: {(aStarSuccessCount > 0 ? aStarGeneratedStatesSum / aStarSuccessCount : 0)}");
-            Console.WriteLine($"- Average Max Stored States: {(aStarSuccessCount > 0 ? aStarMaxStoredStatesSum / aStarSuccessCount : 0)}");
+            if (aStarSuccessCount > 0)
+            {
+                /*Console.WriteLine("\nA* Average Statistics:");
+                Console.WriteLine($"Average Iterations: {aStarAvgIterations / aStarSuccessCount:F2}");
+                Console.WriteLine($"Average Dead Ends: {aStarAvgDeadEnds / aStarSuccessCount:F2}");
+                Console.WriteLine($"Average Total Nodes: {aStarAvgTotalNodes / aStarSuccessCount:F2}");
+                Console.WriteLine($"Average Nodes in Memory: {aStarAvgNodesInMemory / aStarSuccessCount:F2}");*/
+            }
         }
 
         public static QueenState GenerateRandomInitialState()

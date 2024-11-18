@@ -8,35 +8,37 @@ namespace asd2_lab_2
 {
     public class AStar_8Queens
     {
-        public static QueenState Solve(QueenState initialState, out int steps, out int generatedStates, out int maxStoredStates)
+        public static QueenState Solve(QueenState initialState, out Metrics metrics)
         {
+            metrics = new Metrics();
             PriorityQueue<QueenState, int> openList = new PriorityQueue<QueenState, int>();
             HashSet<string> closedList = new HashSet<string>();
 
             openList.Enqueue(initialState, initialState.Heuristic);
-            steps = 0;
-            generatedStates = 0;
-            maxStoredStates = 0;
+            metrics.TotalNodes = 1;
+            metrics.NodesInMemory = 1;
 
             while (openList.Count > 0)
             {
-                maxStoredStates = Math.Max(maxStoredStates, openList.Count);
+                metrics.NodesInMemory = Math.Max(metrics.NodesInMemory, openList.Count + closedList.Count);
                 QueenState current = openList.Dequeue();
-                steps++;
+                metrics.Iterations++;
 
                 if (current.IsGoal())
-                {
                     return current;
-                }
 
                 closedList.Add(string.Join(",", current.Queens));
 
-                foreach (var next in current.GenerateNextStates())
+                var nextStates = current.GenerateNextStates();
+                if (nextStates.Count == 0)
+                    metrics.DeadEnds++;
+
+                foreach (var next in nextStates)
                 {
                     if (!closedList.Contains(string.Join(",", next.Queens)))
                     {
                         openList.Enqueue(next, next.Heuristic);
-                        generatedStates++;
+                        metrics.TotalNodes++;
                     }
                 }
             }
