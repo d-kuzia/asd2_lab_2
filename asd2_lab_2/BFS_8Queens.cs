@@ -58,7 +58,6 @@ namespace asd2_lab_2
                 bool hasValidMove = false;
                 int row = currentBoard.Count;
 
-                // Змінюємо порядок перебору стовпців на випадковий
                 var columns = Enumerable.Range(0, size).ToList();
                 Random rnd = new Random();
                 columns = columns.OrderBy(x => rnd.Next()).ToList();
